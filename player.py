@@ -24,15 +24,15 @@ async def run(options):
         driver = webdriver.Chrome('chromedriver', options=options)
         # driver = webdriver.Firefox()
         async def __get(driver):
-            driver.get("file:///media/matvey/6bf4fb31-7931-4e05-80ce-fca506bac845/git/Projects/caster/example.html")
+            driver.get("file:///media/matvey/6bf4fb31-7931-4e05-80ce-fca506bac845/git/Projects/caster/caster/example.html")
 
         get_handle = __get(driver)
         print(driver)
         await get_handle
         # How to fix this?
-        driver.find_element(By.ID, 'ytplayer').click()
+        driver.find_element(By.ID, 'player').click()
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(15)
         print('Kill!')
         await asyncio.sleep(1)
         driver.quit()
