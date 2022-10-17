@@ -18,13 +18,12 @@ options.add_argument("disable-extensions")
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('useAutomationExtension', True)
 
-async def run(options):
+async def run(driver):
     try:
-        global driver
-        driver = webdriver.Chrome('chromedriver', options=options)
         # driver = webdriver.Firefox()
         async def __get(driver):
-            driver.get("file:///media/matvey/6bf4fb31-7931-4e05-80ce-fca506bac845/git/Projects/caster/caster/example.html")
+            cwd = os.getcwd()
+            driver.get(f'file://{cwd}/example.html')
 
         get_handle = __get(driver)
         print(driver)
@@ -35,12 +34,20 @@ async def run(options):
         await asyncio.sleep(15)
         print('Kill!')
         await asyncio.sleep(1)
-        driver.quit()
 
     except Exception as exc:
         print('Something is wrong', exc)
+        raise exc
+    finally:
+        driver.quit()
 
-asyncio.run(run(options))
+global driver
+driver = webdriver.Chrome('chromedriver', options=options)
+try:
+    asyncio.run(run(driver))
+except Exception as exc:
+    print('Kill browser window, reason:', exc)
+    driver.quit()
 
 #print(driver.service.process.pid)
 #print("Woops I'm going to make something harmful")
