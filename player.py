@@ -9,21 +9,26 @@ import signal
 import time
 import asyncio
 
-options = webdriver.ChromeOptions()
-# options.add_argument('headless')
-options.add_argument('window-size=1920x900')
-# options.add_experimental_option("detach", True)
-options.add_argument("start-maximized")
-options.add_argument("disable-extensions")
-options.add_experimental_option("excludeSwitches", ["enable-automation"])
-options.add_experimental_option('useAutomationExtension', True)
 
-async def run(driver):
+def setup_options():
+    options = webdriver.ChromeOptions()
+    # options.add_argument('headless')
+    options.add_argument('window-size=1920x900')
+    # options.add_experimental_option("detach", True)
+    options.add_argument("start-maximized")
+    options.add_argument("disable-extensions")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', True)
+    return options
+
+
+async def run(driver, html_name: str, kill_predicate, kill_arg):
     try:
         # driver = webdriver.Firefox()
         async def __get(driver):
+            # get current dir
             cwd = os.getcwd()
-            driver.get(f'file://{cwd}/example.html')
+            driver.get(f'file://{cwd}/{html_name}')
 
         get_handle = __get(driver)
         print(driver)
@@ -31,7 +36,9 @@ async def run(driver):
         # How to fix this?
         driver.find_element(By.ID, 'player').click()
 
-        await asyncio.sleep(15)
+        while not kill_predicate(kill_arg):
+            await asyncio.sleep(5)
+
         print('Kill!')
         await asyncio.sleep(1)
 
@@ -41,16 +48,11 @@ async def run(driver):
     finally:
         driver.quit()
 
-global driver
-driver = webdriver.Chrome('chromedriver', options=options)
-try:
-    asyncio.run(run(driver))
-except Exception as exc:
-    print('Kill browser window, reason:', exc)
-    driver.quit()
 
-#print(driver.service.process.pid)
-#print("Woops I'm going to make something harmful")
-#time.sleep(2)
-#print('Now!')
-#os.killpg(driver.service.process.pid, signal.SIGKILL)
+if __name__ == "__main__":
+    driver = webdriver.Chrome('chromedriver', options=setup_options())
+    try:
+        asyncio.run(run(driver, 'parser_example.html', lambda _: False))
+    except Exception as exc:
+        print('Kill browser window, reason:', exc)
+        driver.quit()
