@@ -1,7 +1,7 @@
 from player import setup_driver, run_player
 from parser import parse, get_html
 
-from selenium import webdriver
+from selenium.webdriver.common.by import By
 from multiprocessing import Process, Pool
 from flask import Flask, request
 from time import sleep
@@ -12,6 +12,7 @@ import os
 app = Flask(__name__)
 task = None
 task_handler = None
+# makes mutable
 driver = [0]
 ALIVE_STATUS = 'y'
 
@@ -52,6 +53,14 @@ async def show():
     task_handler.start()
 
     return json.dumps({'result': 'ok'}, indent=2)
+
+
+@app.route('/pause', methods=['GET', 'POST'])
+async def pause():
+    global driver
+    global task_handler
+    if isinstance(task_handler, Process):
+        driver[0].find_element(By.ID, 'player').click()
 
 
 def run():
