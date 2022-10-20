@@ -16,7 +16,7 @@ def get_html(iframelink):
     <title></title>
   </head>
   <body>''' + \
-    f'\n<iframe id="player" src="{iframelink}" width="1920" height="1080" frameborder="0" AllowFullScreen allow="fullscreen *"></iframe>\n' + '''
+    f'\n<iframe id="player" src="{iframelink}" width="1900" height="900" frameborder="0" AllowFullScreen allow="fullscreen *"></iframe>\n' + '''
   </body>
 </html>
 '''
