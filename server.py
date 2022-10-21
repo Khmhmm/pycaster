@@ -35,7 +35,8 @@ async def show():
     if isinstance(task_handler, Process) and isinstance(task, dict):
         driver[0].quit()
         task_handler.terminate()
-        os.remove(task['name'])
+        if os.path.exists(task['name']):
+            os.remove(task['name'])
 
     jdata = request.json
     html = get_html(parse(jdata['link']))
@@ -61,6 +62,17 @@ async def pause():
     global task_handler
     if isinstance(task_handler, Process):
         driver[0].find_element(By.ID, 'player').click()
+
+
+@app.route('/close', methods=['GET', 'POST'])
+async def close():
+    global driver
+    global task_handler
+    if isinstance(task_handler, Process):
+        driver[0].quit()
+        task_handler.terminate()
+        if os.path.exists(task['name']):
+            os.remove(task['name'])
 
 
 def run():
