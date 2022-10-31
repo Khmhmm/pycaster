@@ -33,6 +33,7 @@ async def run_player(driver, html_name: str):
 
         get_handle = __get(driver)
         await get_handle
+        await asyncio.sleep(1)
         # How to fix this?
         driver.find_element(By.ID, 'player').click()
         

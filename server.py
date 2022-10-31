@@ -1,5 +1,5 @@
 from player import setup_driver, run_player
-from parser import parse, get_html
+from parser import parse
 
 from selenium.webdriver.common.by import By
 from multiprocessing import Process, Pool
@@ -17,7 +17,7 @@ driver = [0]
 ALIVE_STATUS = 'y'
 
 def clear_addr(addr):
-    return addr.replace('/', '').replace(':', '').replace('?', '').replace('=', '').replace('&', '').replace(' ', '_').replace('.', '-')
+    return addr.replace('/', '').replace(':', '').replace('?', '').replace('=', '').replace('&', '').replace(' ', '_').replace('.', '-').replace('<', '').replace('>', '')
 
 
 def check_status(status):
@@ -39,7 +39,7 @@ async def show():
             os.remove(task['name'])
 
     jdata = request.json
-    html = get_html(parse(jdata['link']))
+    html = parse(jdata['link'])
     fname = clear_addr(jdata['link']) + '.html'
 
     with open(fname, 'w') as f:
