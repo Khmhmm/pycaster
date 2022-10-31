@@ -2,8 +2,31 @@ import telebot
 from telebot import types
 import requests
 import os
+import random
 
 SERVICE_HTTP = 'http://0.0.0.0:5000'
+
+PAUSE_PHRASES = [
+    'Пауза! Удар!',
+    'Полная остановка, расступись!',
+    'Пауза.',
+    'Минуточку... готово',
+    'Тоже надоело?',
+    'Да сейчас, сейчас.',
+    'Важный звонок?',
+    'Бам! Готово.',
+    'Перекур.',
+    'Перерывчик',
+    'Да легко. Кстати, пауза есть в клавиатурном меню'
+]
+
+CLOSE_PHRASES = [
+    'Закрываем браузер',
+    'Гасим кирогаз',
+    'Тушим компутер',
+    'Вырубаю',
+    'Один момент'
+]
 
 with open('tokenstore.txt', 'r') as f:
     token = f.read()
@@ -77,7 +100,8 @@ def pause(message):
             return
 
         if resp.status_code == 200 or resp.status_code == 500:
-            bot.send_message(message.from_user.id, f'Ставим паузу!')
+            txt = PAUSE_PHRASES[random.randint(0, len(PAUSE_PHRASES)-1)]
+            bot.send_message(message.from_user.id, txt)
         else:
             bot.send_message(message.from_user.id, f'Запрос вернул ошибку с кодом {resp.status_code}')
 
@@ -95,7 +119,8 @@ def close(message):
             return
 
         if resp.status_code == 200 or resp.status_code == 500:
-                bot.send_message(message.from_user.id, f'Закрываем браузер.')
+                txt = CLOSE_PHRASES[random.randint(0, len(CLOSE_PHRASES)-1)]
+                bot.send_message(message.from_user.id, txt)
         else:
             bot.send_message(message.from_user.id, f'Запрос вернул ошибку с кодом {resp.status_code}')
 
