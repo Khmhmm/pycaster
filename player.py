@@ -10,7 +10,7 @@ import time
 import asyncio
 
 
-def setup_driver():
+def setup_chromedriver():
     options = webdriver.ChromeOptions()
     # options.add_argument('headless')
     options.add_argument('window-size=1920x900')
@@ -20,6 +20,20 @@ def setup_driver():
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', True)
     driver = webdriver.Chrome('chromedriver', options=options)
+    return driver
+
+
+def setup_geckodriver():
+    options = webdriver.FirefoxOptions()
+    options.set_preference('network.http.tls-handshake-timeout', 1)
+    driver = webdriver.Firefox(options=options)
+    driver.fullscreen_window()
+    return driver
+
+
+def setup_driver():
+    # driver = setup_chromedriver()    
+    driver = setup_geckodriver()
     return driver
 
 
@@ -53,7 +67,7 @@ async def run_player(driver, html_name: str):
 if __name__ == "__main__":
     driver = setup_driver()
     try:
-        asyncio.run(run(driver, 'example.html'))
+        asyncio.run(run_player(driver, 'example.html'))
     except Exception as exc:
         print('Kill browser window, reason:', exc)
         driver.quit()

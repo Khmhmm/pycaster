@@ -5,6 +5,11 @@ def _parse_yt(http_addr):
     return f"https://youtube.com/embed/{id}"
 
 
+def _parse_ytbe(http_addr):
+    watch_id = http_addr.split('/')[-1]
+    return f"https://youtube.com/embed/{watch_id}"
+
+
 def _get_html_by_link(iframelink):
     return '''
 <!DOCTYPE html>
@@ -14,7 +19,7 @@ def _get_html_by_link(iframelink):
     <title></title>
   </head>
   <body>''' + \
-    f'\n<iframe id="player" src="{iframelink}" width="1900" height="900" frameborder="0" AllowFullScreen allow="fullscreen *"></iframe>\n' + '''
+    f'\n<iframe id="player" src="{iframelink}" width="100%" height="900" frameborder="0" AllowFullScreen allow="fullscreen *"></iframe>\n' + '''
   </body>
 </html>
 '''
@@ -25,8 +30,10 @@ def _get_html_by_iframe(iframe):
     #         ^^^^^^^^^^^
     d = _to_dict(iframe)
     d['id'] = 'player'
-    d['width'] = '1900'
+    d['width'] = '100%'
+    # NOTE: 100% cause very small height
     d['height'] = '900'
+    d['frameborder'] = '0' 
     iframe = _from_dict(d)
     return '''
     <!DOCTYPE html>
@@ -72,6 +79,8 @@ def parse(something):
       http_addr = something
       if 'youtube.com' in http_addr:
           return _get_html_by_link(_parse_yt(http_addr))
+      elif 'youtu.be' in http_addr:
+          return _get_html_by_link(_parse_ytbe(http_addr))
       else:
           return NO_CONTENT
 
