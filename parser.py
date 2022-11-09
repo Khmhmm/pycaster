@@ -1,3 +1,5 @@
+IFRAME_HEIGHT = "900"
+
 def _parse_yt(http_addr):
     watch_id = http_addr.split('/')[-1]
     id_args = watch_id.split('?v=')[1]
@@ -19,7 +21,7 @@ def _get_html_by_link(iframelink):
     <title></title>
   </head>
   <body>''' + \
-    f'\n<iframe id="player" src="{iframelink}" width="100%" height="900" frameborder="0" AllowFullScreen allow="fullscreen *"></iframe>\n' + '''
+    f'\n<iframe id="player" src="{iframelink}" width="100%" height="{IFRAME_HEIGHT}" frameborder="0" AllowFullScreen allow="fullscreen *"></iframe>\n' + '''
   </body>
 </html>
 '''
@@ -32,7 +34,7 @@ def _get_html_by_iframe(iframe):
     d['id'] = 'player'
     d['width'] = '100%'
     # NOTE: 100% cause very small height
-    d['height'] = '900'
+    d['height'] = IFRAME_HEIGHT
     d['frameborder'] = '0' 
     iframe = _from_dict(d)
     return '''

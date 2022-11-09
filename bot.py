@@ -33,6 +33,7 @@ def send_welcome(message):
     bot.send_message(message.from_user.id, '''
 Привет! Я нужен чтобы воспроизводить контент на локальном веб-сервере.
 - 🤗 для этого надо написать /show ссылка, или же /show iframe! Кстати, ссылки с ютуба долго запускаются, это особенности самого сайта.
+- с недавних пор необязательно писать /show, можно просто прислать мне ссылку или айфрейм
 - 🤔 iframe может иметь вид <iframe src="https://site.site/video1"></iframe> и тому подобное
 - 🤓 чтобы его получить надо найти на сайте "код для вставки"
 - 😞 некоторые сайты не пишут в коде для вставки https или http, укажи его самостоятельно! К сожалению, я недостаточно умён, чтобы проверить, по какому протоколу мне взять видео
@@ -47,8 +48,8 @@ def send_welcome(message):
 
 
 @bot.message_handler(commands=['show', 'play'])
-def show(message):
-    link = ' '.join(message.text.split(' ')[1:])
+def show(message, cleared=False):
+    link = ' '.join(message.text.split(' ')[1:]) if not cleared else message.text
     try:
         resp = requests.post(SERVICE_HTTP + '/show',
         json={'link': link})
@@ -116,6 +117,11 @@ def close(message):
     except Exception as exc:
         bot.send_message(message.from_user.id, f'Во время попытки отправить запрос возникла ошибка, привожу ее стектрейс:\n{exc}')
         print(exc)
+
+
+@bot.message_handler(func=lambda message: 'https://youtube.com' in message.text or 'https://youtu.be' in message.text or '<iframe src=' in message.text)
+def show_quick_youtube(message):
+    show(message, cleared=True)
 
 
 bot.polling(none_stop=True, interval=1)
